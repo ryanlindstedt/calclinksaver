@@ -35,7 +35,7 @@ You can choose the simple local mode or the more powerful AWS backend mode.
 This is the quickest way to get started. Your data will be saved only in your current browser.
 
 1.  **Install the Script**:
-      * Open the `CalcLinkSaver-2.0.user.js` file.
+      * Open the `CalcLinkSaver2.user.js` file.
       * Copy its entire content.
       * Open the Tampermonkey dashboard in your browser, click the `+` tab to create a new script, and paste the code.
       * Press Ctrl+S or File \> Save.
