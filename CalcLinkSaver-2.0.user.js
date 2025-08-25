@@ -9,7 +9,7 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
-// @connect      mazonaws.com
+// @connect      amazonaws.com
 // @license      MIT
 // ==/UserScript==
 
