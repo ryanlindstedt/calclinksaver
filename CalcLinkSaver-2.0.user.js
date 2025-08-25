@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    http://tampermonkey.net/
-// @version      2.1
+// @version      2.2
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
-// @author       Ryan Lindstedt
+// @author       Gemini
 // @match        https://calculator.aws/*
 // @grant        GM_addStyle
 // @grant        GM_setValue
@@ -23,7 +23,7 @@
     // 1. Run the deploy_backend.py script.
     // 2. Paste the URL and API Key it provides below.
     // To use Local Storage Mode (Default), leave both strings empty ('').
-    const API_GATEWAY_URL = ''; // e.g., 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/estimates'
+    const API_GATEWAY_URL = ''; // e.g., 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/estimates'
     const API_KEY = '';         // e.g., 'AbcdeFGHIJKLMnopq12345...'
 
 
@@ -114,10 +114,6 @@
     // DATA HANDLING LOGIC (Abstracted for AWS Backend or Local Storage)
     // =========================================================================
     const dataHandler = {
-        /**
-         * Fetches all saved estimates.
-         * @returns {Promise<Array>} A promise that resolves to an array of estimate objects.
-         */
         getLinks: () => new Promise((resolve, reject) => {
             if (useAWSBackend) {
                 GM_xmlhttpRequest({
@@ -142,11 +138,6 @@
             }
         }),
 
-        /**
-         * Saves a new estimate object.
-         * @param {object} newLink - The estimate object to save.
-         * @returns {Promise<void>}
-         */
         saveLink: (newLink) => new Promise(async (resolve, reject) => {
             if (useAWSBackend) {
                 GM_xmlhttpRequest({
@@ -178,11 +169,6 @@
             }
         }),
 
-        /**
-         * Deletes an estimate by its ID.
-         * @param {string} id - The unique ID of the estimate to delete.
-         * @returns {Promise<void>}
-         */
         deleteLink: (id) => new Promise(async (resolve, reject) => {
             if (useAWSBackend) {
                 GM_xmlhttpRequest({
@@ -210,10 +196,6 @@
             }
         }),
 
-        /**
-         * Deletes all saved estimates.
-         * @returns {Promise<void>}
-         */
         clearAllLinks: () => new Promise((resolve, reject) => {
             if (useAWSBackend) {
                 GM_xmlhttpRequest({
@@ -244,35 +226,25 @@
     // =========================================================================
     // UI COMPONENTS & LOGIC
     // =========================================================================
-
-    /**
-     * Shows a large, temporary notification in the center of the screen.
-     * @param {string} message - The message to display.
-     */
     function showPopupNotification(message) {
         const popup = document.createElement('div');
         popup.className = 'cls2-popup-notification';
         popup.textContent = message;
         document.body.appendChild(popup);
-        setTimeout(() => popup.classList.add('show'), 10); // Fade in
+        setTimeout(() => popup.classList.add('show'), 10);
         setTimeout(() => {
-            popup.classList.remove('show'); // Fade out
+            popup.classList.remove('show');
             popup.addEventListener('transitionend', () => popup.remove());
         }, 2500);
     }
 
-    /**
-     * Creates and injects the main UI elements into the page.
-     */
     function initializeUI() {
-        // Floating Action Button
         const fab = document.createElement('button');
         fab.className = 'cls2-fab';
         fab.innerHTML = '📑';
         fab.title = 'View Saved Estimates';
         document.body.appendChild(fab);
 
-        // Modal Overlay and Content
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'cls2-modal-overlay';
         modalOverlay.innerHTML = `
@@ -299,7 +271,6 @@
         `;
         document.body.appendChild(modalOverlay);
 
-        // Add event listeners
         fab.addEventListener('click', showModal);
         modalOverlay.querySelector('.cls2-modal-close').addEventListener('click', hideModal);
         modalOverlay.addEventListener('click', (e) => {
@@ -308,19 +279,15 @@
         modalOverlay.querySelector('.cls2-download-all').addEventListener('click', handleDownloadCsv);
         modalOverlay.querySelector('.cls2-clear-all').addEventListener('click', handleClearAll);
 
-        // Add delegated event listener for delete buttons
         modalOverlay.querySelector('.cls2-links-table tbody').addEventListener('click', async (e) => {
             if (e.target.classList.contains('cls2-link-item-delete')) {
                 const idToDelete = e.target.dataset.id;
                 await dataHandler.deleteLink(idToDelete);
-                renderLinksTable(); // Refresh the table
+                renderLinksTable();
             }
         });
     }
 
-    /**
-     * Renders the saved links into the modal's table.
-     */
     async function renderLinksTable() {
         const modal = document.querySelector('.cls2-modal-overlay');
         const tableBody = modal.querySelector('.cls2-links-table tbody');
@@ -336,7 +303,6 @@
             footerButtons.forEach(btn => btn.style.display = hasLinks ? 'inline-block' : 'none');
 
             if (hasLinks) {
-                // Sort by timestamp descending
                 links.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 links.forEach(linkObj => {
                     const row = tableBody.insertRow();
@@ -350,13 +316,7 @@
             }
         } catch (error) {
             console.error("Failed to load estimates:", error);
-            let errorMsg = "Failed to load estimates. Is the API Key correct?";
-            if (error.status === 403) {
-                errorMsg = "Access Denied (403). Please check your API Key."
-            } else if (error.status === 429) {
-                errorMsg = "Too many requests (429). Please wait and try again."
-            }
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">${errorMsg}</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">Failed to load estimates. Check API Key and @connect directive.</td></tr>`;
         }
     }
 
@@ -376,6 +336,9 @@
         }
     }
 
+    // #########################################################################
+    // ## THIS FUNCTION HAS BEEN UPDATED TO BE MORE RELIABLE ##
+    // #########################################################################
     async function handleDownloadCsv() {
         const links = await dataHandler.getLinks();
         if (links.length === 0) {
@@ -383,33 +346,36 @@
             return;
         }
 
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Timestamp,Name,URL\n";
-
+        // 1. Build the CSV content string
+        let csvContent = "Timestamp,Name,URL\n";
         links.forEach(link => {
             const name = `"${link.name.replace(/"/g, '""')}"`; // Escape double quotes
             const timestamp = `"${new Date(link.timestamp).toLocaleString()}"`;
-            csvContent += `${timestamp},${name},${link.url}\n`;
+            const url = link.url;
+            csvContent += `${timestamp},${name},${url}\n`;
         });
 
-        const encodedUri = encodeURI(csvContent);
+        // 2. Create a Blob from the CSV string
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+        // 3. Create a temporary link to trigger the download
         const linkElement = document.createElement("a");
-        linkElement.setAttribute("href", encodedUri);
+        const url = URL.createObjectURL(blob);
+        linkElement.setAttribute("href", url);
         linkElement.setAttribute("download", "aws_estimates.csv");
+        linkElement.style.visibility = 'hidden';
         document.body.appendChild(linkElement);
+
+        // 4. Click the link and clean up
         linkElement.click();
         document.body.removeChild(linkElement);
+        URL.revokeObjectURL(url);
     }
 
 
     // =========================================================================
     // AWS PAGE INTERACTION (via MutationObserver)
     // =========================================================================
-
-    /**
-     * Handles the click event on the AWS "Copy public link" button.
-     * @param {Event} e - The click event.
-     */
     async function handleCopyButtonClick(e) {
         const wrapper = e.target.closest('.save-share-clipboard-wrapper');
         const input = wrapper?.querySelector('input[type="text"][readonly]');
@@ -418,7 +384,6 @@
         const url = input.value;
         const links = await dataHandler.getLinks();
 
-        // Prevent saving duplicates
         if (links.some(link => link.url === url)) {
             showPopupNotification('ℹ️ Link Already Saved');
             return;
@@ -429,7 +394,7 @@
         const timestamp = new Date().toISOString();
 
         const newLink = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID for local and backend use
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             name: name,
             url: url,
             timestamp: timestamp
@@ -443,12 +408,7 @@
         }
     }
 
-    /**
-     * Attaches a click listener to the copy button if it doesn't already have one.
-     * @param {Node} targetNode - The DOM node to search within.
-     */
     function attachListenerToCopyButton(targetNode) {
-        // Use a more specific selector for the copy button inside the "Save and Share" modal
         const copyButton = targetNode.querySelector('.save-share-clipboard-wrapper .clipboard-button');
         if (copyButton && !copyButton.dataset.cls2ListenerAttached) {
             copyButton.addEventListener('click', handleCopyButtonClick);
@@ -460,8 +420,7 @@
         for (const mutation of mutationsList) {
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1) { // It's an element node
-                        // Check if the node itself is the button, or contains it
+                    if (node.nodeType === 1) {
                         attachListenerToCopyButton(node);
                     }
                 });
