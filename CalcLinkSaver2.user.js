@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    http://tampermonkey.net/
-// @version      2.2
+// @version      2.3
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
-// @author       Gemini
+// @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
 // @grant        GM_addStyle
 // @grant        GM_setValue
@@ -99,6 +99,7 @@
         word-wrap: break-word;
     }
     .cls2-links-table th { font-weight: bold; background-color: #fafafa; }
+    .cls2-links-table .cls2-col-cost { width: 130px; }
     .cls2-links-table .cls2-col-timestamp { width: 190px; }
     .cls2-links-table .cls2-col-actions { width: 120px; }
 
@@ -139,7 +140,7 @@
 
 
     // =========================================================================
-    // DATA HANDLING LOGIC (Omitted for brevity, it is unchanged)
+    // DATA HANDLING LOGIC
     // =========================================================================
     const dataHandler = {
         getLinks: () => new Promise((resolve, reject) => {
@@ -166,88 +167,88 @@
             }
         }),
 
- saveLink: (newLink) => new Promise(async (resolve, reject) => {
-     if (useAWSBackend) {
-         GM_xmlhttpRequest({
-             method: 'POST',
-             url: API_GATEWAY_URL,
-             headers: {
-                 'Content-Type': 'application/json',
-                 'x-api-key': API_KEY
-             },
-             data: JSON.stringify(newLink),
-                           onload: (res) => {
-                               if (res.status >= 200 && res.status < 300) {
-                                   resolve();
-                               } else {
-                                   reject(res);
-                               }
-                           },
-                           onerror: (err) => {
-                               console.error('AWS Backend Error (POST):', err);
-                               alert('Error: Could not save link to the backend. Check console for details.');
-                               reject(err);
-                           }
-         });
-     } else {
-         const links = await GM_getValue(STORAGE_KEY, []);
-         links.push(newLink);
-         await GM_setValue(STORAGE_KEY, links);
-         resolve();
-     }
- }),
+        saveLink: (newLink) => new Promise(async (resolve, reject) => {
+            if (useAWSBackend) {
+                GM_xmlhttpRequest({
+                    method: 'POST',
+                    url: API_GATEWAY_URL,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    data: JSON.stringify(newLink),
+                    onload: (res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            resolve();
+                        } else {
+                            reject(res);
+                        }
+                    },
+                    onerror: (err) => {
+                        console.error('AWS Backend Error (POST):', err);
+                        alert('Error: Could not save link to the backend. Check console for details.');
+                        reject(err);
+                    }
+                });
+            } else {
+                const links = await GM_getValue(STORAGE_KEY, []);
+                links.push(newLink);
+                await GM_setValue(STORAGE_KEY, links);
+                resolve();
+            }
+        }),
 
- deleteLink: (id) => new Promise(async (resolve, reject) => {
-     if (useAWSBackend) {
-         GM_xmlhttpRequest({
-             method: 'DELETE',
-             url: `${API_GATEWAY_URL}/${id}`,
-             headers: { 'x-api-key': API_KEY },
-             onload: (res) => {
-                 if (res.status >= 200 && res.status < 300) {
-                     resolve();
-                 } else {
-                     reject(res);
-                 }
-             },
-             onerror: (err) => {
-                 console.error('AWS Backend Error (DELETE):', err);
-                 alert('Error: Could not delete link from the backend. Check console for details.');
-                 reject(err);
-             }
-         });
-     } else {
-         let links = await GM_getValue(STORAGE_KEY, []);
-         links = links.filter(link => link.id !== id);
-         await GM_setValue(STORAGE_KEY, links);
-         resolve();
-     }
- }),
+        deleteLink: (id) => new Promise(async (resolve, reject) => {
+            if (useAWSBackend) {
+                GM_xmlhttpRequest({
+                    method: 'DELETE',
+                    url: `${API_GATEWAY_URL}/${id}`,
+                    headers: { 'x-api-key': API_KEY },
+                    onload: (res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            resolve();
+                        } else {
+                            reject(res);
+                        }
+                    },
+                    onerror: (err) => {
+                        console.error('AWS Backend Error (DELETE):', err);
+                        alert('Error: Could not delete link from the backend. Check console for details.');
+                        reject(err);
+                    }
+                });
+            } else {
+                let links = await GM_getValue(STORAGE_KEY, []);
+                links = links.filter(link => link.id !== id);
+                await GM_setValue(STORAGE_KEY, links);
+                resolve();
+            }
+        }),
 
- clearAllLinks: () => new Promise((resolve, reject) => {
-     if (useAWSBackend) {
-         GM_xmlhttpRequest({
-             method: 'DELETE',
-             url: API_GATEWAY_URL,
-             headers: { 'x-api-key': API_KEY },
-             onload: (res) => {
-                 if (res.status >= 200 && res.status < 300) {
-                     resolve();
-                 } else {
-                     reject(res);
-                 }
-             },
-             onerror: (err) => {
-                 console.error('AWS Backend Error (Clear All):', err);
-                 alert('Error: Could not clear all links from the backend. Check console for details.');
-                 reject(err);
-             }
-         });
-     } else {
-         GM_setValue(STORAGE_KEY, []);
-         resolve();
-     }
- })
+        clearAllLinks: () => new Promise((resolve, reject) => {
+            if (useAWSBackend) {
+                GM_xmlhttpRequest({
+                    method: 'DELETE',
+                    url: API_GATEWAY_URL,
+                    headers: { 'x-api-key': API_KEY },
+                    onload: (res) => {
+                        if (res.status >= 200 && res.status < 300) {
+                            resolve();
+                        } else {
+                            reject(res);
+                        }
+                    },
+                    onerror: (err) => {
+                        console.error('AWS Backend Error (Clear All):', err);
+                        alert('Error: Could not clear all links from the backend. Check console for details.');
+                        reject(err);
+                    }
+                });
+            } else {
+                GM_setValue(STORAGE_KEY, []);
+                resolve();
+            }
+        })
     };
 
 
@@ -286,6 +287,7 @@
         <thead>
         <tr>
         <th>Name</th>
+        <th class="cls2-col-cost">Annual Cost</th>
         <th class="cls2-col-timestamp">Timestamp</th>
         <th class="cls2-col-actions">Action</th>
         </tr>
@@ -308,31 +310,31 @@
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) hideModal();
         });
-            modalOverlay.querySelector('.cls2-download-all').addEventListener('click', handleDownloadCsv);
-            modalOverlay.querySelector('.cls2-delete-all').addEventListener('click', handleDeleteAll);
+        modalOverlay.querySelector('.cls2-download-all').addEventListener('click', handleDownloadCsv);
+        modalOverlay.querySelector('.cls2-delete-all').addEventListener('click', handleDeleteAll);
 
-            modalOverlay.querySelector('.cls2-links-table tbody').addEventListener('click', async (e) => {
-                const actionBtn = e.target.closest('.cls2-action-btn');
-                if (!actionBtn) return;
+        modalOverlay.querySelector('.cls2-links-table tbody').addEventListener('click', async (e) => {
+            const actionBtn = e.target.closest('.cls2-action-btn');
+            if (!actionBtn) return;
 
-                const action = actionBtn.dataset.action;
+            const action = actionBtn.dataset.action;
 
-                if (action === 'delete') {
-                    if (confirm('Are you sure you want to delete this estimate?')) {
-                        const idToDelete = actionBtn.dataset.id;
-                        await dataHandler.deleteLink(idToDelete);
-                        renderLinksTable();
-                    }
-                } else if (action === 'copy') {
-                    const urlToCopy = actionBtn.dataset.url;
-                    navigator.clipboard.writeText(urlToCopy).then(() => {
-                        showPopupNotification('✅ URL Copied!');
-                    }, (err) => {
-                        showPopupNotification('❌ Copy Failed');
-                        console.error('Failed to copy URL: ', err);
-                    });
+            if (action === 'delete') {
+                if (confirm('Are you sure you want to delete this estimate?')) {
+                    const idToDelete = actionBtn.dataset.id;
+                    await dataHandler.deleteLink(idToDelete);
+                    renderLinksTable();
                 }
-            });
+            } else if (action === 'copy') {
+                const urlToCopy = actionBtn.dataset.url;
+                navigator.clipboard.writeText(urlToCopy).then(() => {
+                    showPopupNotification('✅ URL Copied!');
+                }, (err) => {
+                    showPopupNotification('❌ Copy Failed');
+                    console.error('Failed to copy URL: ', err);
+                });
+            }
+        });
     }
 
     async function renderLinksTable() {
@@ -355,6 +357,7 @@
                     const row = tableBody.insertRow();
                     row.innerHTML = `
                     <td>${linkObj.name}</td>
+                    <td class="cls2-col-cost">${linkObj.annualCost || 'N/A'}</td>
                     <td class="cls2-col-timestamp">${new Date(linkObj.timestamp).toLocaleString()}</td>
                     <td class="cls2-col-actions">
                     <div class="cls2-actions">
@@ -368,7 +371,7 @@
             }
         } catch (error) {
             console.error("Failed to load estimates:", error);
-            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;">Failed to load estimates. Check API Key and @connect directive.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:red;">Failed to load estimates. Check API Key and @connect directive.</td></tr>`;
         }
     }
 
@@ -395,12 +398,13 @@
             return;
         }
 
-        let csvContent = "Name,Timestamp,URL\n";
+        let csvContent = "Name,Annual Cost,Timestamp,URL\n";
         links.forEach(link => {
             const name = `"${link.name.replace(/"/g, '""')}"`;
+            const annualCost = `"${(link.annualCost || 'N/A').replace(/"/g, '""')}"`;
             const timestamp = `"${new Date(link.timestamp).toLocaleString()}"`;
             const url = link.url;
-            csvContent += `${name},${timestamp},${url}\n`;
+            csvContent += `${name},${annualCost},${timestamp},${url}\n`;
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -409,7 +413,7 @@
         linkElement.setAttribute("href", url);
         linkElement.setAttribute("download", "aws_estimates.csv");
         linkElement.style.visibility = 'hidden';
-        document.body.appendChild(linkEement);
+        document.body.appendChild(linkElement);
         linkElement.click();
         document.body.removeChild(linkElement);
         URL.revokeObjectURL(url);
@@ -417,7 +421,7 @@
 
 
     // =========================================================================
-    // AWS PAGE INTERACTION (Omitted for brevity, it is unchanged)
+    // AWS PAGE INTERACTION
     // =========================================================================
     async function handleCopyButtonClick(e) {
         const wrapper = e.target.closest('.save-share-clipboard-wrapper');
@@ -432,16 +436,23 @@
             return;
         }
 
+        // --- MODIFIED SECTION START ---
         const nameElement = document.querySelector('h1[class*="awsui_h1-variant"]');
         const name = nameElement ? nameElement.textContent.trim() : "Untitled Estimate";
+        
+        const costElement = document.querySelector('div.price-banner-amount-bold[data-annual-cost="true"]');
+        const annualCost = costElement ? costElement.textContent.trim() : 'N/A';
+        
         const timestamp = new Date().toISOString();
 
         const newLink = {
             id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
- name: name,
- url: url,
- timestamp: timestamp
+            name: name,
+            url: url,
+            timestamp: timestamp,
+            annualCost: annualCost
         };
+        // --- MODIFIED SECTION END ---
 
         try {
             await dataHandler.saveLink(newLink);
@@ -464,7 +475,13 @@
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === 1) {
-                        attachListenerToCopyButton(node);
+                        // Check the node itself and its descendants for the button
+                        if (node.matches && node.matches('.save-share-clipboard-wrapper')) {
+                           attachListenerToCopyButton(node);
+                        } else {
+                           const button = node.querySelector('.save-share-clipboard-wrapper .clipboard-button');
+                           if (button) attachListenerToCopyButton(node);
+                        }
                     }
                 });
             }
