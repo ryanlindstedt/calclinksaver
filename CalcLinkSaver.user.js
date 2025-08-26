@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    http://tampermonkey.net/
-// @version      2.3
+// @version      2.4
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
 // @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
