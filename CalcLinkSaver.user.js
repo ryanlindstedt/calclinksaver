@@ -22,14 +22,41 @@
     // =========================================================================
     // SCRIPT CONFIGURATION
     // =========================================================================
-    const API_GATEWAY_URL = 'https://ug3hfit6wc.execute-api.us-east-1.amazonaws.com/prod/estimates'; // e.g., 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/estimates'
-    const API_KEY = 'txNhvsmzKL4cbr9v4tGOm9A9CRqKZOFg6d9azHDN';         // e.g., 'AbcdeFGHIJKLMnopq12345...'
+
+    // Configuration keys for Tampermonkey storage
+    const CONFIG_URL_KEY = 'cls2_api_gateway_url';
+    const CONFIG_API_KEY = 'cls2_api_key';
+
+    // Load credentials from storage, or use empty strings as defaults
+    let API_GATEWAY_URL = GM_getValue(CONFIG_URL_KEY, '');
+    let API_KEY = GM_getValue(CONFIG_API_KEY, '');
+
+    // Function to prompt user for credentials and save them
+    function configureCredentials() {
+        const newUrl = prompt('Enter your AWS API Gateway URL:', API_GATEWAY_URL);
+        if (newUrl !== null) { // User didn't click cancel
+            GM_setValue(CONFIG_URL_KEY, newUrl);
+            API_GATEWAY_URL = newUrl;
+            alert('API Gateway URL saved!');
+        }
+
+        const newKey = prompt('Enter your AWS API Key:', API_KEY);
+        if (newKey !== null) { // User didn't click cancel
+            GM_setValue(CONFIG_API_KEY, newKey);
+            API_KEY = newKey;
+            alert('API Key saved!');
+        }
+        location.reload(); // Reload to apply changes
+    }
+
+    // Register a menu command in Tampermonkey to update credentials later
+    GM_registerMenuCommand('Configure CalcLinkSaver AWS backend', configureCredentials);
 
 
     // =========================================================================
     // SCRIPT CONSTANTS & STATE
     // =========================================================================
-    const useAWSBackend = API_GATEWAY_URL !== '' && API_KEY !== '';
+    let useAWSBackend = API_GATEWAY_URL !== '' && API_KEY !== '';
     const STORAGE_KEY = 'aws_saved_estimates_v2';
 
 
