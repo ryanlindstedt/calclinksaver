@@ -41,7 +41,7 @@ This is the quickest way to get started. Your data will be saved only in your cu
       * Press Ctrl+S or File \> Save.
 2.  **Verify**:
       * Navigate to the [AWS Calculator](https://calculator.aws/).
-      * You should see a floating orange button with a `📑` icon in the bottom-left corner. You're all set\!
+      * You should see a floating orange button "CalcLinkSaver" in the bottom-right corner. You're all set\!
 
 -----
 
@@ -112,7 +112,7 @@ This is done using the provided `deploy_backend.py` script. It will automaticall
 
 2.  **Managing Estimates**:
 
-      * Click the floating `📑` button on the bottom-left of the page.
+      * Click the floating button on the bottom-right of the page.
       * This opens the **Saved AWS Estimates** modal, where you can:
           * See all your saved links, sorted by most recent.
           * Open a link in a new tab.
