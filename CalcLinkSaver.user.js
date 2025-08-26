@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    https://github.com/ryanlindstedt
-// @version      2025.08.26-002
+// @version      2025.8.26-002
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
 // @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
