@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    https://github.com/ryanlindstedt
-// @version      2025.8.26-001
+// @version      2025.08.26-002
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
 // @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
@@ -33,14 +33,14 @@
 
     // Function to prompt user for credentials and save them
     function configureCredentials() {
-        const newUrl = prompt('Enter your AWS API Gateway URL:', API_GATEWAY_URL);
+        const newUrl = prompt('Enter your AWS API Gateway URL (blank for local mode):', API_GATEWAY_URL);
         if (newUrl !== null) { // User didn't click cancel
             GM_setValue(CONFIG_URL_KEY, newUrl);
             API_GATEWAY_URL = newUrl;
             alert('API Gateway URL saved!');
         }
 
-        const newKey = prompt('Enter your AWS API Key:', API_KEY);
+        const newKey = prompt('Enter your AWS API Key (blank for local mode):', API_KEY);
         if (newKey !== null) { // User didn't click cancel
             GM_setValue(CONFIG_API_KEY, newKey);
             API_KEY = newKey;
