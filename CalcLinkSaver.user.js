@@ -5,10 +5,13 @@
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
 // @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
+// @updateURL    https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js
+// @downloadURL  https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js
 // @grant        GM_addStyle
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
+// @grant        GM_registerMenuCommand
 // @connect      amazonaws.com
 // @license      MIT
 // ==/UserScript==
@@ -19,8 +22,8 @@
     // =========================================================================
     // SCRIPT CONFIGURATION
     // =========================================================================
-    const API_GATEWAY_URL = ''; // e.g., 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/estimates'
-    const API_KEY = '';         // e.g., 'AbcdeFGHIJKLMnopq12345...'
+    const API_GATEWAY_URL = 'https://ug3hfit6wc.execute-api.us-east-1.amazonaws.com/prod/estimates'; // e.g., 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/estimates'
+    const API_KEY = 'txNhvsmzKL4cbr9v4tGOm9A9CRqKZOFg6d9azHDN';         // e.g., 'AbcdeFGHIJKLMnopq12345...'
 
 
     // =========================================================================
@@ -439,10 +442,10 @@
         // --- MODIFIED SECTION START ---
         const nameElement = document.querySelector('h1[class*="awsui_h1-variant"]');
         const name = nameElement ? nameElement.textContent.trim() : "Untitled Estimate";
-        
+
         const costElement = document.querySelector('div.price-banner-amount-bold[data-annual-cost="true"]');
         const annualCost = costElement ? costElement.textContent.trim() : 'N/A';
-        
+
         const timestamp = new Date().toISOString();
 
         const newLink = {
