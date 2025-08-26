@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CalcLinkSaver
 // @namespace    http://tampermonkey.net/
-// @version      2.4
+// @version      2.4.1
 // @description  Save, manage, and download AWS Calculator estimates with an optional AWS backend or local storage fallback.
 // @author       Ryan Lindstedt
 // @match        https://calculator.aws/*
@@ -74,7 +74,7 @@
         position: fixed; top: 50%; left: 50%;
         transform: translate(-50%, -50%);
         background-color: rgba(35, 47, 62, 0.95); color: #ffffff;
-        padding: 40px 60px; border-radius: 12px;
+        padding: 40px 60px; border-radius: 0px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         z-index: 100001; font-size: 28px; font-weight: bold;
         opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease;
@@ -108,7 +108,7 @@
     .cls2-modal-overlay.visible { display: flex; }
     .cls2-modal-content {
         background-color: #ffffff; color: #232f3e; padding: 24px;
-        border-radius: 8px; width: 90%; max-width: 800px;
+        border-radius: 0px; width: 90%; max-width: 800px;
         max-height: 80vh; display: flex; flex-direction: column;
         box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     }
@@ -159,7 +159,7 @@
         font-size: 12px; color: #545b64;
     }
     .cls2-footer-btn {
-        border: none; border-radius: 4px; padding: 8px 16px;
+        border: none; border-radius: 0px; padding: 8px 16px;
         cursor: pointer; font-weight: bold;
         transition: background-color 0.2s ease;
     }
