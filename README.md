@@ -2,10 +2,6 @@
 
 **CalcLinkSaver** is a UserScript that enhances the AWS Pricing Calculator by allowing you to save, manage, and download your estimates. It offers two modes for data storage: a simple, zero-configuration local storage option, and a more robust, persistent backend powered by your own AWS account.
 
-*\<p align="center"\>CalcLinkSaver adds a convenient button to the AWS Calculator page.\</p\>*
-
------
-
 ## Features
 
   * **Effortless Saving**: Automatically saves an estimate when you click the "Copy public link" button in the "Save and Share" modal.
@@ -17,15 +13,25 @@
       * **AWS Backend Mode**: An optional, secure backend that uses your own AWS account for persistent storage. This allows you to access your saved estimates across different browsers or computers.
   * **Easy Configuration**: Switch between storage modes and configure your AWS backend through a simple menu command.
 
------
 
 ## Screenshots
+<p align="center">
+<img src="screenshots/normal%20view.png" alt="The configuration menu is accessible via your UserScript manager" width="600"><br />
+CalcLinkSaver adds a convenient button to the AWS Calculator page.
+</p>
+<p align="center">
+<img src="screenshots/pop%20up%20table.png" alt="View, manage, and export all your saved estimates in one placer" width="600"><br />
+View, manage, and export all your saved estimates in one place.
+</p>
+<p align="center">
+<img src="screenshots/save%20link.png" alt="The configuration menu is accessible via your UserScript manager" width="600"><br />
+Clicking the Share Link button copy the link to clipboard and also saves it to CalcLinkSaver.
+</p>
+<p align="center">
+<img src="screenshots/estimate%20saved.png" alt="A notification confirms that your estimate has been saved" width="600"><br />
+A notification confirms that your estimate has been saved.
+</p>
 
-*\<p align="center"\>View, manage, and export all your saved estimates in one place.\</p\>*
-
-*\<p align="center"\>A notification confirms that your estimate has been saved.\</p\>*
-
------
 
 ## Installation
 
@@ -35,7 +41,6 @@
 
     **[Install CalcLinkSaver.user.js](https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js)**
 
------
 
 ## Usage
 
@@ -45,25 +50,28 @@
 4.  Click the **Copy public link** button. The script will automatically capture the name, annual cost, and URL, and save it.
 5.  Click the **CalcLinkSaver** button on the bottom right of the page at any time to open the management modal.
 
------
 
-## Configuration
+## Simple Configuration
 
-The script works out-of-the-box using your browser's local storage. If you want to use the persistent AWS backend, you'll need to configure it.
+Nothing else should need to be configured. It will store the links in the UserScript Manager locally.
+
+
+## Advanced Configuration
+
+If you want to use the persistent AWS backend, you'll need to configure it.
 
 1.  Click on the Tampermonkey extension icon in your browser.
 2.  Select **Configure CalcLinkSaver AWS backend**.
 3.  You will be prompted to enter an **API Gateway URL** and an **API Key**.
-4.  
-![The configuration menu is accessible via your UserScript manager.](screenshots/configure%20backend.png)
-*\<p align="center"\>The configuration menu is accessible via your UserScript manager.\</p\>*
 
+<p align="center">
+<img src="screenshots/configure%20backend.png" alt="The configuration menu is accessible via your UserScript manager" width="600"><br />
+The configuration menu is accessible via your UserScript manager.
+</p>
 
 To get these credentials, you must deploy the backend to your own AWS account.
 
------
-
-## Optional: AWS Backend Deployment
+## AWS Backend Deployment
 
 Deploying the backend creates a serverless infrastructure (API Gateway, Lambda, DynamoDB) in your AWS account to securely store your estimates.
 
