@@ -30,7 +30,7 @@ A notification confirms that your estimate has been saved.
 </p>
 
 ## Prerequisites
-- A browser with a userscript manager like **Tampermonkey** installed.
+- A browser with a userscript manager like [Tampermonkey](https://www.tampermonkey.net/) installed.
 - **Optional AWS backend Mode**: An AWS account with credentials configured in your environment (e.g., in AWS CloudShell).
 ### What are Tampermonkey and Greasemonkey?
 
@@ -48,9 +48,10 @@ This is a safe and secure way to enhance your browsing experience for several re
 
 ## Installation & Configuration
 ### Step 1: Install the Userscript
-1. Install the Tampermonkey browser extension.
+1. Install the [Tampermonkey browser extension](https://www.tampermonkey.net/).
 2. Click on the following link to install the script: [Install CalcLinkSaver.user.js](https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js)
 3. Tampermonkey will open a new tab with the script's contents. Click the "Install" button.
+4. CalcLinkSaver should now show up on [calculator.aws](https://calculator.aws/).
 
 ### Step 2: Choose your Mode
 By default, the script works in **Local Storage mode**. No further configuration is needed.
