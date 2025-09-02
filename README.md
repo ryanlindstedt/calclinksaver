@@ -54,8 +54,10 @@ The script works out-of-the-box using your browser's local storage. If you want 
 1.  Click on the Tampermonkey extension icon in your browser.
 2.  Select **Configure CalcLinkSaver AWS backend**.
 3.  You will be prompted to enter an **API Gateway URL** and an **API Key**.
-
+4.  
+![The configuration menu is accessible via your UserScript manager.](screenshots/configure%20backend.png)
 *\<p align="center"\>The configuration menu is accessible via your UserScript manager.\</p\>*
+
 
 To get these credentials, you must deploy the backend to your own AWS account.
 
