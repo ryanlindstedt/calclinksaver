@@ -92,8 +92,6 @@ Deploying the backend creates a serverless infrastructure (API Gateway, Lambda, 
 3.  The script will provision the necessary AWS resources and, upon completion, output the **URL** and **API Key**.
 4.  Copy and paste these values into the script's configuration prompts as described above.
 
------
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
