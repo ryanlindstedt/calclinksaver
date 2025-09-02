@@ -49,11 +49,11 @@ This is a safe and secure way to enhance your browsing experience for several re
 ## Installation & Configuration
 ### Step 1: Install the Userscript
 1. Install the [Tampermonkey browser extension](https://www.tampermonkey.net/).
-2. Click on the following link to install the script: [Install CalcLinkSaver.user.js](https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js)
+2. Click on the following link to install the script: [Install CalcLinkSaver.user.js](https://github.com/ryanlindstedt/calclinksaver/raw/refs/heads/main/CalcLinkSaver.user.js).
 3. Tampermonkey will open a new tab with the script's contents. Click the "Install" button.
-4. CalcLinkSaver should now show up on [calculator.aws](https://calculator.aws/).
+4. Some browsers will need additioanl security permissions. See Tampermonkey FAQ for [Chrome based (including Edge)](https://www.tampermonkey.net/faq.php#Q209).
+5. CalcLinkSaver should now show up on [calculator.aws](https://calculator.aws/).
 
-Note: Some browsers will need additioanl security permissions. See Tampermonkey FAQ for [Chrome based](https://www.tampermonkey.net/faq.php#Q209).
 
 ### Step 2: Choose your Mode
 By default, the script works in **Local Storage mode**. No further configuration is needed.
